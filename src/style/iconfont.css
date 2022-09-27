@@ -1,14 +1,14 @@
 /* Logo 字体 */
 @font-face {
   font-family: 'iconfont';  /* Project id 3676609 */
-  src: url('//at.alicdn.com/t/c/font_3676609_m4y1401629k.woff2?t=1664305869215') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3676609_m4y1401629k.woff?t=1664305869215') format('woff'),
-       url('//at.alicdn.com/t/c/font_3676609_m4y1401629k.ttf?t=1664305869215') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3676609_3rgedau6o4q.woff2?t=1664310396604') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3676609_3rgedau6o4q.woff?t=1664310396604') format('woff'),
+       url('//at.alicdn.com/t/c/font_3676609_3rgedau6o4q.ttf?t=1664310396604') format('truetype');
 }
 
 .iconfont {
   font-family: "iconfont" !important;
-  font-size: 16px;
+  font-size: .16rem;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
