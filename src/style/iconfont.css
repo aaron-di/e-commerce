@@ -1,9 +1,9 @@
 /* Logo 字体 */
 @font-face {
   font-family: 'iconfont';  /* Project id 3676609 */
-  src: url('//at.alicdn.com/t/c/font_3676609_6ys9whirj2c.woff2?t=1664337526881') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3676609_6ys9whirj2c.woff?t=1664337526881') format('woff'),
-       url('//at.alicdn.com/t/c/font_3676609_6ys9whirj2c.ttf?t=1664337526881') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3676609_en1b7k1uqpg.woff2?t=1664747129740') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3676609_en1b7k1uqpg.woff?t=1664747129740') format('woff'),
+       url('//at.alicdn.com/t/c/font_3676609_en1b7k1uqpg.ttf?t=1664747129740') format('truetype');
 }
 
 .iconfont {
