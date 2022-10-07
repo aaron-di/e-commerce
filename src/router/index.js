@@ -5,13 +5,19 @@ const routes = [
     path: '/',
     name: 'Home',
     component: () => import(/* webpackChunkName: "home" */ '../views/home/Home.vue')
-  },
-  {
+  }, {
+    path: '/cartList',
+    name: 'CartList',
+    component: () => import(/* webpackChunkName: "cartList" */ '../views/cartList/CartList.vue')
+  }, {
+    path: '/orderConfirmation',
+    name: 'OrderConfirmation',
+    component: () => import(/* webpackChunkName: "orderConfirmation" */ '../views/orderConfirmation/OrderConfirmation.vue')
+  }, {
     path: '/shop/:id',
     name: 'Shop',
     component: () => import(/* webpackChunkName: "shop" */ '../views/shop/Shop.vue')
-  },
-  {
+  }, {
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '../views/login/Login.vue'),
@@ -19,8 +25,7 @@ const routes = [
       const { isLogin } = localStorage
       isLogin ? next({ name: 'Home' }) : next()
     }
-  },
-  {
+  }, {
     path: '/register',
     name: 'Register',
     component: () => import(/* webpackChunkName: "register" */ '../views/register/Register.vue'),
