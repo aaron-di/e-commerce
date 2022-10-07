@@ -1,14 +1,18 @@
 <template>
+  <div class="mask" v-if="showCart"></div>
   <div class="cart">
-    <div class="product">
-      <div class="product__header"></div>
+    <div class="product" v-if="showCart">
+      <div class="product__header">
+        <div class="product__header__all" @click="() => setCartItemsChecked(shopId)">
+          <span class="product__header__icon iconfont" v-html="allChecked ? '&#xe730;': '&#xe72f;'"></span>
+          全选
+        </div>
+        <div class="product__header__clear" @click="() => cleanCartProducts(shopId)">清空购物车</div>
+      </div>
       <template v-for="item in productList" :key="item._id">
         <div class="product__item" v-if="item.count > 0">
-          <div
-            class="product__item__checked iconfont"
-            v-html="item.check ? '&#xe730;': '&#xe72f;'"
-            @click="() => changeCartItemChecked(shopId, item._id)"
-          ></div>
+          <div class="product__item__checked iconfont" v-html="item.check ? '&#xe730;': '&#xe72f;'"
+            @click="() => changeCartItemChecked(shopId, item._id)"></div>
           <img class="product__item__img" :src="item.imgUrl" />
           <div class="product__item__detail">
             <h4 class="product__item__title">{{ item.name }}</h4>
@@ -29,7 +33,8 @@
     </div>
     <div class="check">
       <div class="check__icon">
-        <img src="http://www.dell-lee.com/imgs/vue3/basket.png" class="check__icon__img" />
+        <img src="http://www.dell-lee.com/imgs/vue3/basket.png" class="check__icon__img"
+          @click="handleCartShowChange" />
         <div class="check__icon__tag">{{ total }}</div>
       </div>
       <div class="check__info">
@@ -41,7 +46,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useCommonCartEffect } from './commonCartEffect'
@@ -78,6 +83,20 @@ const useCartEffect = (shopId) => {
     return count.toFixed(2)
   })
 
+  const allChecked = computed(() => {
+    const productList = cartList[shopId]
+    let result = true
+    if (productList) {
+      for (let i in productList) {
+        const product = productList[i]
+        if (product.count > 0 && !product.check) {
+          result = false
+        }
+      }
+    }
+    return result
+  })
+
   const productList = computed(() => {
     const productList = cartList[shopId] || []
     return productList
@@ -87,7 +106,15 @@ const useCartEffect = (shopId) => {
     store.commit('changeCartItemChecked', { shopId, productId })
   }
 
-  return { total, price, productList, changeCartItemInfo, changeCartItemChecked }
+  const cleanCartProducts = (shopId) => {
+    store.commit('cleanCartProducts', { shopId })
+  }
+
+  const setCartItemsChecked = (shopId) => {
+    store.commit('setCartItemsChecked', { shopId })
+  }
+
+  return { total, price, productList, cleanCartProducts, allChecked, changeCartItemInfo, changeCartItemChecked, setCartItemsChecked }
 }
 
 export default {
@@ -95,8 +122,29 @@ export default {
   setup () {
     const route = useRoute()
     const shopId = route.params.id
-    const { total, price, productList, changeCartItemInfo, changeCartItemChecked } = useCartEffect(shopId)
-    return { total, price, shopId, productList, changeCartItemInfo, changeCartItemChecked }
+    const showCart = ref(false)
+    const handleCartShowChange = () => {
+      showCart.value = !showCart.value
+    }
+
+    const {
+      total, price, productList, cleanCartProducts, allChecked,
+      changeCartItemInfo, changeCartItemChecked, setCartItemsChecked
+    } = useCartEffect(shopId)
+
+    return {
+      total,
+      price,
+      shopId,
+      productList,
+      cleanCartProducts,
+      changeCartItemInfo,
+      changeCartItemChecked,
+      allChecked,
+      setCartItemsChecked,
+      showCart,
+      handleCartShowChange
+    }
   }
 }
 </script>
@@ -105,11 +153,23 @@ export default {
 @import '../../style/variables.scss';
 @import '../../style/mixins.scss';
 
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: rgba(0, 0, 0, .5);
+  z-index: 1;
+}
+
 .cart {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 2;
+  background: #FFF;
 }
 
 .product {
@@ -118,8 +178,28 @@ export default {
   background: #FFF;
 
   &__header {
-    height: .52rem;
+    display: flex;
+    line-height: .52rem;
     border-bottom: 1px solid #F1F1F1;
+    font-size: .14rem;
+    color: #333;
+
+    &__all {
+      width: .64rem;
+      margin-left: .18rem;
+    }
+
+    &__icon {
+      display: inline-block;
+      color: #0091FF;
+      font-size: .2rem;
+    }
+
+    &__clear {
+      flex: 1;
+      margin-right: .16rem;
+      text-align: right;
+    }
   }
 
   &__item {
