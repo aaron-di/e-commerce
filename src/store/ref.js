@@ -1,25 +1,9 @@
-import { createStore } from 'vuex'
+import Vuex from 'vuex'
 
-export default createStore({
+export default Vuex.createStore({
   state: {
     // { shopId: {shopName:'', productList:{ productId: {} }}}
-    cartList: {
-    //   shopId: {
-    //     shopName: '沃尔玛',
-    //     productList: {
-    //       productId: {
-    //         _id: '1',
-    //         name: '番茄250g/份',
-    //         imgUrl: 'http://www.dell-lee.com/imgs/vue3/tomato.png',
-    //         sales: 10,
-    //         price: 33.6,
-    //         oldPrice: 39.6,
-    //         count: 2
-    //       }
-    //     }
-    //   }
-    // }
-    }
+    cartList: {}
   },
   mutations: {
     changeCartItemInfo (state, payload) {
@@ -55,7 +39,6 @@ export default createStore({
       const { shopId } = payload
       state.cartList[shopId].productList = {}
     },
-
     setCartItemsChecked (state, payload) {
       const { shopId } = payload
       const products = state.cartList[shopId].productList
@@ -66,9 +49,5 @@ export default createStore({
         }
       }
     }
-  },
-  actions: {
-  },
-  modules: {
   }
 })
