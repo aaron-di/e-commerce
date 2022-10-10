@@ -4,7 +4,7 @@
     <div class="products__wrapper">
       <div class="products__list">
         <template v-for="item in productList" :key="item._id">
-          <div class="products__item" v-if="item.count > 0">
+          <div class="products__item">
             <img class="products__item__img" :src="item.imgUrl" />
             <div class="products__item__detail">
               <h4 class="products__item__title">{{ item.name }}</h4>

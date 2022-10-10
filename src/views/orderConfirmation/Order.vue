@@ -1,42 +1,66 @@
 <template>
   <div class="order">
     <div class="order__price">实付金额 <b>¥{{ calculations.price }}</b></div>
-    <div class="order__btn">提交订单</div>
+    <div class="order__btn" @click="() => handleSubmitClick(true)">提交订单</div>
   </div>
-  <div class="mask">
-    <div class="mask__content">
+  <div class="mask" v-show="showConfirm" @click="() => handleSubmitClick(false)">
+    <div class="mask__content" @click.stop>
       <h3 class="mask__content__title">确认要离开收银台？</h3>
       <p class="mask__content__desc">请尽快完成支付，否则订单将被取消</p>
       <div class="mask__content__btns">
-        <div
-          class="mask__content__btn mask__content__btn--first"
-          @click="handleCancelOrder"
-        >取消订单</div>
-        <div
-          class="mask__content__btn mask__content__btn--last"
-          @click="handleConfirmOrder"
-        >确认支付</div>
+        <div class="mask__content__btn mask__content__btn--first" @click="() => handleConfirmOrder(true)">取消订单</div>
+        <div class="mask__content__btn mask__content__btn--last" @click="() => handleConfirmOrder(false)">确认支付</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { useRoute } from 'vue-router'
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { post } from '../../utils/request'
 import { useCommonCartEffect } from '../../effects/cartEffects'
+import store from '../../store'
 export default {
   name: 'OrderConfirmation',
   setup () {
+    const router = useRouter()
     const route = useRoute()
-    const shopId = route.params.id
-    const { calculations } = useCommonCartEffect(shopId)
-    const handleCancelOrder = () => {
-      alert('cancel')
+    const shopId = parseInt(route.params.id, 10)
+
+    const showConfirm = ref(false)
+    const { calculations, shopName, productList } = useCommonCartEffect(shopId)
+    const handleSubmitClick = (status) => {
+      showConfirm.value = status
     }
-    const handleConfirmOrder = () => {
-      alert('confirm')
+
+    const handleConfirmOrder = async (isCanceled) => {
+      const products = []
+      for (let i in productList.value) {
+        const product = productList.value[i]
+        products.push({ id: parseInt(product._id, 10), num: product.count })
+      }
+
+      try {
+        const result = await post('/api/order', {
+          addressId: 1,
+          shopId,
+          shopName: shopName.value,
+          isCanceled,
+          products
+        })
+        console.log(result)
+        if (result?.errno === 0) {
+          alert('下单完成，返回首页')
+          store.commit('clearCartData', shopId)
+          router.push({ name: 'Home' })
+        }
+      } catch (e) {
+        alert('请求失败')
+      }
     }
-    return { calculations, handleCancelOrder, handleConfirmOrder }
+
+    return { showConfirm, handleSubmitClick, calculations, handleConfirmOrder }
   }
 }
 </script>
