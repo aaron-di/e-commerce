@@ -141,7 +141,7 @@ export default {
     }
 
     &__count {
-      line-height: 14px;
+      line-height: .14rem;
       font-size: .12rem;
       color: $content-fontColor;
       text-align: right;

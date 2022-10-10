@@ -152,7 +152,7 @@ export default {
 
       &--first {
         margin-right: .12rem;
-        border: 1px solid #4FB0F9;
+        border: .01rem solid #4FB0F9;
         color: #4FB0F9;
       }
 
