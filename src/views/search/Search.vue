@@ -105,6 +105,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../style/variables.scss';
+
 .wrapper {
   margin: 0 .18rem;
 
