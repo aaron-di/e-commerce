@@ -90,21 +90,21 @@ export default {
       margin: .04rem 0 0 0;
       line-height: .17rem;
       font-size: .12rem;
-      color: #333;
+      color: $content-fontColor;
       @include ellipsis;
     }
     &__price {
       line-height: .2rem;
       margin: .02rem 0 0 0;
-      color: #999;
+      color: $light-fontColor;
       font-size: .14rem;
       @include ellipsis;
       .yen {
         font-size: .12rem;
-        color: #E93B3B;
+        color: $highlight-fontColor;
       }
       .price {
-        color: #E93B3B;
+        color: $highlight-fontColor;
       }
       .origin {
         margin-left: .06rem;
