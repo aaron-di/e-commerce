@@ -4,10 +4,12 @@
     五角场合生汇综合广场 - Apple Store
     <span class="iconfont position__notice">&#xe759;</span>
   </div>
-  <div class="search">
-    <span class="iconfont">&#xe752;</span>
-    <span class="search__text">山姆会员商店优惠产品</span>
-  </div>
+  <router-link :to="{ path: '/search' }">
+    <div class="search">
+      <span class="iconfont">&#xe752;</span>
+      <span class="search__text">山姆会员商店优惠产品</span>
+    </div>
+  </router-link>
   <div class="banner">
     <img class="banner__img" src="http://www.dell-lee.com/imgs/vue3/banner.jpg" alt="banner-img" />
   </div>
