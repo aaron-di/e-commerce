@@ -23,17 +23,19 @@
           class="area__list__item"
           v-for="item in history"
           :key="item"
+          @click="() => goToSearchList(item)"
         >{{ item }}</li>
       </ul>
     </div>
     <div class="area">
       <h4 class="area__title">热门搜索</h4>
       <ul class="area__list">
-        <li class="area__list__item">尖椒肉丝</li>
-        <li class="area__list__item">鲜花</li>
-        <li class="area__list__item">山姆会员商店</li>
-        <li class="area__list__item">新鲜水果</li>
-        <li class="area__list__item">生日鲜花</li>
+        <li
+          class="area__list__item"
+          v-for="item in hotWordList"
+          :key="item"
+          @click="() => goToSearchList(item)"
+        >{{ item }}</li>
       </ul>
     </div>
   </div>
@@ -41,7 +43,20 @@
 
 <script>
 import { ref } from 'vue'
+import { get } from '../../utils/request'
 import { useRouter } from 'vue-router'
+
+// 热词相关逻辑
+const useHotWordListEffect = () => {
+  const hotWordList = ref([])
+  const getHotWordList = async () => {
+    const result = await get('/api/shop/search/hot-words')
+    if (result?.errno === 0 && result?.data?.length) {
+      hotWordList.value = result.data
+    }
+  }
+  return { hotWordList, getHotWordList }
+}
 
 export default {
   name: 'Search',
@@ -68,11 +83,22 @@ export default {
     const handleCancelSearchClick = () => {
       router.back()
     }
+    // 页面跳转逻辑
+    const goToSearchList = (keyword) => {
+      router.push(`/searchList?keyword=${keyword}`)
+    }
+    // 使用热词逻辑
+    const { hotWordList, getHotWordList } = useHotWordListEffect()
+    getHotWordList()
+
     return {
       history,
+      hotWordList,
       handleSearchChange,
       handleClearHistoryClick,
-      handleCancelSearchClick
+      handleCancelSearchClick,
+      getHotWordList,
+      goToSearchList
     }
   }
 }
