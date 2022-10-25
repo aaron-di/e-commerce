@@ -2,20 +2,28 @@
   <div class="wrapper">
     <div class="search">
       <span class="iconfont">&#xe752;</span>
-      <input type="text" class="search__area">
-      <div class="search__cancel">取消</div>
+      <input
+        type="text"
+        class="search__area"
+        @change="handleSearchChange"
+        placeholder="山姆会员商店优惠产品"
+      >
+      <div class="search__cancel" @click="handleCancelSearchClick">取消</div>
     </div>
-    <div class="area">
+    <div class="area" v-if="history.length">
       <h4 class="area__title">
         搜索历史
-        <span class="area__title__clear">清除搜索历史</span>
+        <span
+          class="area__title__clear"
+          @click="handleClearHistoryClick"
+        >清除搜索历史</span>
       </h4>
       <ul class="area__list">
-        <li class="area__list__item">尖椒肉丝</li>
-        <li class="area__list__item">鲜花</li>
-        <li class="area__list__item">山姆会员商店</li>
-        <li class="area__list__item">新鲜水果</li>
-        <li class="area__list__item">生日鲜花</li>
+        <li
+          class="area__list__item"
+          v-for="item in history"
+          :key="item"
+        >{{ item }}</li>
       </ul>
     </div>
     <div class="area">
@@ -32,8 +40,41 @@
 </template>
 
 <script>
-export default {
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+export default {
+  name: 'Search',
+  setup () {
+    const router = useRouter()
+    const history = ref(JSON.parse(localStorage.history || '[]'))
+    // 当用户输入搜索内容后，执行的操作
+    const handleSearchChange = (e) => {
+      const searchValue = e.target.value
+      if (!searchValue) return
+      const hasValue = history.value.find(item => item === searchValue)
+      if (!hasValue) {
+        history.value.push(searchValue)
+        localStorage.history = JSON.stringify(history.value)
+      }
+      router.push(`/searchList?keyword=${searchValue}`)
+    }
+    // 当清理历史记录时，执行的操作
+    const handleClearHistoryClick = () => {
+      history.value = []
+      localStorage.history = JSON.stringify([])
+    }
+    // 当取消搜索时，执行的操作
+    const handleCancelSearchClick = () => {
+      router.back()
+    }
+    return {
+      history,
+      handleSearchChange,
+      handleClearHistoryClick,
+      handleCancelSearchClick
+    }
+  }
 }
 </script>
 
@@ -46,7 +87,7 @@ export default {
     display: flex;
     line-height: .32rem;
     margin-top: .16rem;
-    color: #333;
+    color: #666;
 
     .iconfont {
       position: absolute;
