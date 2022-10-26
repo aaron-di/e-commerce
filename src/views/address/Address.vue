@@ -2,16 +2,26 @@
   <div class="wrapper">
     <div class="title">
       我的地址
-      <span class="title__create">新建</span>
+      <span class="title__create">
+        <router-link to="/addressEdit">新建</router-link>
+      </span>
     </div>
+    <div
+      class="empty"
+      v-if="addressList.length === 0"
+    >暂无地址数据</div>
     <div class="address">
-      <div class="address__item">
+      <div
+        class="address__item"
+        v-for="address in addressList"
+        :key="address._id"
+      >
         <p class="address__item__basic">
-          小影
-          <span class="address__item__phone">13688888888</span>
+          {{ address.name }}
+          <span class="address__item__phone">{{ address.phone }}</span>
         </p>
         <div class="address__item__address">
-          上海市翻斗花园1号楼101室
+          {{ address.city }}{{ address.department }}{{ address.houseNumber }}
         </div>
         <div class="iconfont">&#xe779;</div>
       </div>
@@ -21,12 +31,29 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+import { get } from '../../utils/request'
 import Docker from '../../components/Docker'
+
+// 地址列表逻辑
+const useAddressListEffect = () => {
+  const addressList = ref([])
+  const getAddressList = async () => {
+    const result = await get('/api/user/address')
+    if (result?.errno === 0 && result?.data?.length) {
+      addressList.value = result.data
+    }
+  }
+  return { addressList, getAddressList }
+}
+
 export default {
   name: 'Address',
   components: { Docker },
   setup () {
-    return {}
+    const { addressList, getAddressList } = useAddressListEffect()
+    getAddressList()
+    return { addressList }
   }
 }
 </script>
@@ -49,6 +76,11 @@ export default {
     position: absolute;
     right: .18rem;
     font-size: .14rem;
+
+    a {
+      text-decoration: none;
+      color: $content-fontColor;
+    }
   }
 }
 
@@ -59,7 +91,7 @@ export default {
     position: relative;
     box-sizing: border-box;
     padding: .18rem .63rem .18rem .16rem;
-    margin-bottom: 1.6rem;
+    margin-bottom: .16rem;
     background: $bgColor;
     border-radius: .04rem;
 
@@ -90,5 +122,9 @@ export default {
       font-size: .2rem;
     }
   }
+}
+
+.empty {
+  @include empty;
 }
 </style>
