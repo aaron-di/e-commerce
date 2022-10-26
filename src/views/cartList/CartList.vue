@@ -135,10 +135,10 @@ export default {
 }
 
 .empty {
-    margin-top: .5rem;
-    line-height: .5rem;
-    text-align: center;
-    font-size: .16rem;
-    color: $light-fontColor;
-  }
+  margin-top: .5rem;
+  line-height: .5rem;
+  text-align: center;
+  font-size: .16rem;
+  color: $light-fontColor;
+}
 </style>
