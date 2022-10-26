@@ -15,6 +15,7 @@
         class="address__item"
         v-for="address in addressList"
         :key="address._id"
+        @click="() => handleAddressClick(address._id)"
       >
         <p class="address__item__basic">
           {{ address.name }}
@@ -32,6 +33,7 @@
 
 <script>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { get } from '../../utils/request'
 import Docker from '../../components/Docker'
 
@@ -51,9 +53,13 @@ export default {
   name: 'Address',
   components: { Docker },
   setup () {
+    const router = useRouter()
     const { addressList, getAddressList } = useAddressListEffect()
     getAddressList()
-    return { addressList }
+    const handleAddressClick = (id) => {
+      router.push(`/addressEdit?id=${id}`)
+    }
+    return { addressList, handleAddressClick }
   }
 }
 </script>

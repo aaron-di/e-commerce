@@ -57,11 +57,10 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { onBeforeMount, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { post } from '../../utils/request'
 import Toast, { useToastEffect } from '../../components/Toast'
-import router from '../../router'
 
 // 点击回退逻辑
 const useBackRouterEffect = () => {
@@ -69,20 +68,39 @@ const useBackRouterEffect = () => {
   const handleBackClick = () => {
     router.back()
   }
-  return { handleBackClick }
+  return { router, handleBackClick }
 }
 
 export default {
   name: 'AddressEdit',
   components: { Toast },
   setup () {
+    const route = useRoute()
+    const id = route.query.id
+
     const city = ref('')
     const department = ref('')
     const houseNumber = ref('')
     const name = ref('')
     const phone = ref('')
+
     const { show, toastMessage, showToast } = useToastEffect()
-    const { handleBackClick } = useBackRouterEffect()
+    const { router, handleBackClick } = useBackRouterEffect()
+
+    onBeforeMount(async () => {
+      if (id) {
+        const result = await post(`/api/user/address/${id}`)
+        if (result?.errno === 0) {
+          const data = result.data
+          city.value = data.city
+          department.value = data.department
+          houseNumber.value = data.houseNumber
+          name.value = data.name
+          phone.value = data.phone
+        }
+      }
+    })
+
     const handleSaveClick = async () => {
       if (
         !city.value ||
@@ -93,15 +111,28 @@ export default {
       ) {
         showToast('请填写所有内容')
       } else {
-        const result = await post('/api/user/address', {
-          city: city.value,
-          department: department.value,
-          houseNumber: houseNumber.value,
-          name: name.value,
-          phone: phone.value
-        })
-        if (result?.errno === 0) {
-          router.back()
+        if (id) {
+          const result = await post(`/api/user/address/${id}`, {
+            city: city.value,
+            department: department.value,
+            houseNumber: houseNumber.value,
+            name: name.value,
+            phone: phone.value
+          })
+          if (result?.errno === 0) {
+            router.back()
+          }
+        } else {
+          const result = await post('/api/user/address', {
+            city: city.value,
+            department: department.value,
+            houseNumber: houseNumber.value,
+            name: name.value,
+            phone: phone.value
+          })
+          if (result?.errno === 0) {
+            router.back()
+          }
         }
       }
     }
