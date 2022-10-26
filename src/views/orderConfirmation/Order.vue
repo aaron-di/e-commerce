@@ -42,6 +42,9 @@ const useMakeOrderEffect = (productList, shopId, shopName) => {
       })
       console.log(result)
       if (result?.errno === 0) {
+        const cartList = JSON.parse(localStorage.cartList || '{}')
+        delete cartList[shopId]
+        localStorage.cartList = JSON.stringify(cartList)
         store.commit('clearCartData', shopId)
         router.push({ name: 'OrderList' })
       }
