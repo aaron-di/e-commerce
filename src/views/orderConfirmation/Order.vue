@@ -1,7 +1,7 @@
 <template>
   <div class="order">
     <div class="order__price">实付金额 <b>¥{{ calculations.price }}</b></div>
-    <div class="order__btn" @click="() => handleShowConfirmChange(true)">提交订单</div>
+    <div v-show="showSubmitBtn" class="order__btn" @click="() => handleShowConfirmChange(true)">提交订单</div>
   </div>
   <div class="mask" v-show="showConfirm" @click="() => handleShowConfirmChange(false)">
     <div class="mask__content" @click.stop>
@@ -23,7 +23,7 @@ import { useCommonCartEffect } from '../../effects/cartEffects'
 import store from '../../store'
 
 // 下单相关逻辑
-const useMakeOrderEffect = (productList, shopId, shopName) => {
+const useMakeOrderEffect = (productList, shopId, shopName, addressId) => {
   const router = useRouter()
   const handleConfirmOrder = async (isCanceled) => {
     const products = []
@@ -34,7 +34,7 @@ const useMakeOrderEffect = (productList, shopId, shopName) => {
 
     try {
       const result = await post('/api/order', {
-        addressId: 1,
+        addressId,
         shopId,
         shopName: shopName.value,
         isCanceled,
@@ -71,10 +71,16 @@ export default {
     const shopId = parseInt(route.params.id, 10)
 
     const { calculations, shopName, productList } = useCommonCartEffect(shopId)
-    const { handleConfirmOrder } = useMakeOrderEffect(productList, shopId, shopName)
+    const { handleConfirmOrder } = useMakeOrderEffect(productList, shopId, shopName, route.query.addressId)
     const { showConfirm, handleShowConfirmChange } = useShowMaskEffect()
 
-    return { showConfirm, handleShowConfirmChange, calculations, handleConfirmOrder }
+    return {
+      showSubmitBtn: !!route.query.addressId,
+      showConfirm,
+      handleShowConfirmChange,
+      calculations,
+      handleConfirmOrder
+    }
   }
 }
 </script>

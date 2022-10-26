@@ -4,12 +4,14 @@
       <div class="iconfont top__header__back" @click="handleBackClick">&#xe779;</div>
       确认订单
     </div>
-    <div class="top__receiver">
+    <div class="top__receiver" @click="handleAddressClick">
       <div class="top__receiver__title">收货地址</div>
-      <div class="top__receiver__address">上海理工大学军工路516号</div>
-      <div class="top__receiver__info">
-        <span class="top__receiver__info__name">Aaron Di</span>
-        <span class="top__receiver__info__name">13688888888</span>
+      <div class="top__receiver__address">
+        {{ hasAddress ? `${data.city}${data.department}${data.houseNumber}` : '请选择收货地址' }}
+      </div>
+      <div v-if="hasAddress" class="top__receiver__info">
+        <span class="top__receiver__info__name">{{ data.name }}</span>
+        <span class="top__receiver__info__name">{{ data.phone }}</span>
       </div>
       <div class="iconfont top__receiver__icon">&#xe775;</div>
     </div>
@@ -17,13 +19,40 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router'
+import { onBeforeMount, reactive } from 'vue'
+import { get } from '../../utils/request'
+import { useRouter, useRoute } from 'vue-router'
 export default {
   name: 'TopArea',
   setup () {
     const router = useRouter()
+    const route = useRoute()
+    const data = reactive({})
+    const addressId = route.query.addressId
     const handleBackClick = () => { router.back() }
-    return { handleBackClick }
+    const handleAddressClick = () => {
+      router.push(`/addressSelect?path=${route.path}`)
+    }
+    onBeforeMount(async () => {
+      if (addressId) {
+        const result = await get(`/api/user/address/${addressId}`)
+        if (result?.errno === 0) {
+          const resultData = result.data
+          data.city = resultData.city
+          data.department = resultData.department
+          data.houseNumber = resultData.houseNumber
+          data.name = resultData.name
+          data.phone = resultData.phone
+        }
+      }
+    })
+
+    return {
+      data,
+      hasAddress: !!addressId,
+      handleBackClick,
+      handleAddressClick
+    }
   }
 }
 </script>
