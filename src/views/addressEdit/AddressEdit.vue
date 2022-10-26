@@ -1,5 +1,6 @@
 <template>
   <div class="wrapper">
+    <Toast v-if="show" :message="toastMessage" />
     <div class="title">
       <div class="iconfont" @click="handleBackClick">
         &#xe779;
@@ -56,10 +57,65 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { post } from '../../utils/request'
+import Toast, { useToastEffect } from '../../components/Toast'
+import router from '../../router'
+
+// 点击回退逻辑
+const useBackRouterEffect = () => {
+  const router = useRouter()
+  const handleBackClick = () => {
+    router.back()
+  }
+  return { handleBackClick }
+}
+
 export default {
   name: 'AddressEdit',
+  components: { Toast },
   setup () {
-    return { }
+    const city = ref('')
+    const department = ref('')
+    const houseNumber = ref('')
+    const name = ref('')
+    const phone = ref('')
+    const { show, toastMessage, showToast } = useToastEffect()
+    const { handleBackClick } = useBackRouterEffect()
+    const handleSaveClick = async () => {
+      if (
+        !city.value ||
+        !department.value ||
+        !houseNumber.value ||
+        !name.value ||
+        !phone.value
+      ) {
+        showToast('请填写所有内容')
+      } else {
+        const result = await post('/api/user/address', {
+          city: city.value,
+          department: department.value,
+          houseNumber: houseNumber.value,
+          name: name.value,
+          phone: phone.value
+        })
+        if (result?.errno === 0) {
+          router.back()
+        }
+      }
+    }
+    return {
+      city,
+      department,
+      houseNumber,
+      name,
+      phone,
+      show,
+      toastMessage,
+      handleBackClick,
+      handleSaveClick
+    }
   }
 }
 </script>
