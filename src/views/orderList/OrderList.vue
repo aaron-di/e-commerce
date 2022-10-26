@@ -78,23 +78,16 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../style/variables.scss';
+@import '../../style/mixins.scss';
 
 .wrapper {
   overflow-y: auto;
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: .5rem;
-  right: 0;
-  background: #F8F8F8;
+  @include fix-content;
+  background: $darkBgColor;
 }
 
 .title {
-  line-height: .44rem;
-  background: $bgColor;
-  font-size: .16rem;
-  color: #333;
-  text-align: center;
+  @include title;
 }
 
 .order {
